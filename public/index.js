@@ -19,37 +19,43 @@ const functions = {
 	// Function takes in a launchpadId and replies with information about failed launches
 	// getFailedLaunches(id);
 	getFailedLaunches: async (launchpadId) => {
-		//get the launchpad data
-		const launchpad = await axios.get(
-			`https://api.spacexdata.com/v4/launchpads/${launchpadId}`
-		);
-		//get the launches id (Array of strings) from launchpad response
-		let launchesIds = launchpad.data.launches;
-		// Make request to get the data for each launch
-		let launchesData = launchesIds.map(async (launchId) => {
-			const launches = await axios.get(
-				`https://api.spacexdata.com/v4/launches/${launchId}`
+		try {
+			//get the launchpad data
+			const launchpad = await axios.get(
+				`https://api.spacexdata.com/v4/launchpads/${launchpadId}`
 			);
-			return launches.data;
-		});
-		//Wait for all the launches data to resolve
-		launchesData = await Promise.all(launchesData);
-		// Filter where the failures array length is 0 (No failures)
-		// Then we use map to return the failurse in our desired format
-		let failures = launchesData
-			.filter((e) => {
-				return e.failures.length > 0;
-			})
-			.map((e) => {
-				return {
-					name: e.name,
-					failures: e.failures,
-				};
+			//get the launches id (Array of strings) from launchpad response
+			let launchesIds = launchpad.data.launches;
+			// Make request to get the data for each launch
+			let launchesData = launchesIds.map(async (launchId) => {
+				const launches = await axios.get(
+					`https://api.spacexdata.com/v4/launches/${launchId}`
+				);
+				return launches.data;
 			});
-		return {
-			launchpad: launchpad.data.name,
-			all_failures: failures,
-		};
+			//Wait for all the launches data to resolve
+			launchesData = await Promise.all(launchesData);
+			// Filter where the failures array length is 0 (No failures)
+			// Then we use map to return the failurse in our desired format
+			let failures = launchesData
+				.filter((e) => {
+					return e.failures.length > 0;
+				})
+				.map((e) => {
+					return {
+						name: e.name,
+						failures: e.failures,
+					};
+				});
+			return {
+				launchpad: launchpad.data.name,
+				all_failures: failures,
+			};
+		} catch (error) {
+			return {
+				error: error,
+			};
+		}
 	},
 	getStarLinkSatellites: async (query) => {
 		const satallites = await axios.get(
@@ -103,14 +109,24 @@ const functions = {
 
 document.getElementById("btn1").onclick = function () {
 	document.getElementById("failures").innerHTML = "";
-	functions.getFailedLaunches("5e9e4502f5090995de566f86").then((res) => {
-		document.getElementById("launchpad").innerHTML = res.launchpad;
-		res.all_failures.forEach((failure) => {
-			let node = document.createElement("li");
-			node.innerHTML = `${failure.name} - ${failure.failures}`;
-			document.getElementById("failures").appendChild(node);
+	document.getElementById("launchpad").innerHTML = "";
+	functions
+		.getFailedLaunches(document.getElementById("lid").value)
+		.then((res) => {
+			if (res.all_failures && res.failures.length > 0) {
+				document.getElementById("launchpad").innerHTML = res.launchpad;
+				res.all_failures.forEach((failure) => {
+					let node = document.createElement("li");
+					node.innerHTML = `${failure.name} - ${failure.failures}`;
+					document.getElementById("failures").appendChild(node);
+				});
+			} else {
+				let node = document.createElement("li");
+				let nodeText = document.createTextNode("No match found");
+				node.appendChild(nodeText);
+				document.getElementById("failures").appendChild(node);
+			}
 		});
-	});
 };
 document.getElementById("btn2").onclick = function () {
 	document.getElementById("satellites1").innerHTML = "";
