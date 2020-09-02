@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+	</head>
+	<body
+		style="
+			display: grid;
+			place-items: center;
+			min-height: 100vh;
+			width: 100vw;
+			box-sizing: border-box;
+		"
+	>
+		<div>
+			<h1>Test function one <span> with ID: 5e9e4502f5090995de566f86</span></h1>
+			<button id="btn1">Function One</button>
+			<div id="response1">
+				<h2 id="launchpad"></h2>
+				<ul id="failures"></ul>
+			</div>
+		</div>
+		<div>
+			<h1>Test function Two (ISO: 2019-05-24)</h1>
+			<input type="date" id="myDate" />
+			<button id="btn2" type="button">Test</button>
+			<div id="response2">
+				<ul id="satellites1"></ul>
+			</div>
+		</div>
+
+		<div>
+			<h1>Test function Two (YYYY)</h1>
+			<button id="btn3">Function two</button>
+			<input type="text" id="yyyy" />
+			<div id="response2">
+				<ul id="satellites2"></ul>
+			</div>
+		</div>
+		<div>
+			<h1>Test function Two (May)</h1>
+			<button id="btn4">Function two</button>
+			<input type="text" id="month" />
+			<div id="response2">
+				<ul id="satellites3"></ul>
+			</div>
+		</div>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+
+		<script src="/index.js"></script>
+	</body>
+</html>
